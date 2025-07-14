@@ -1,19 +1,11 @@
 const asyncErrorHandler = require("../../utils/asyncErrorHandler");
 const { STATUS_CODES, TEXTS } = require("../../config/constants");
 const { Business,Category } = require("../../models");
-const {categoryCreateSchema}= require('./../../middlewares/validationSchemas/categorySchema')
 const { Op, where } = require('sequelize');
 const { raw } = require("express");
 
 const create = asyncErrorHandler(async (req, res) => {
 
-  const { error } = categoryCreateSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({
-      statusCode: STATUS_CODES.REQUIRED,
-      message: error.details[0].message,
-    });
-  }
   const categoryData={
     ...req.body,
     business_id:req.params.id

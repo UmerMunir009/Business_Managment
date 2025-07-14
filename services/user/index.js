@@ -2,18 +2,8 @@ const asyncErrorHandler = require("../../utils/asyncErrorHandler");
 const { STATUS_CODES, TEXTS } = require("../../config/constants");
 const { generateToken } = require("../../utils/jwtToken");
 const { User } = require("../../models");
-const {userCreateSchema}=require("./../../middlewares/validationSchemas/usersSchema")
-
 const create = asyncErrorHandler(async (req, res) => {
-  const { error, value } = userCreateSchema.validate(req.body);
 
-  if (error) {
-    return res.status(400).json({
-      statusCode: STATUS_CODES.REQUIRED,
-      message: error.details[0].message,
-    });
-  }
-  
   const isExist = await User.findOne({
     where: {
       email: req.body.email
@@ -28,7 +18,7 @@ const create = asyncErrorHandler(async (req, res) => {
     });
   }
 
-  const data = await User.create(value);
+  const data = await User.create(req.body);
 
   res.status(STATUS_CODES.SUCCESS).json({
     statusCode: STATUS_CODES.SUCCESS,

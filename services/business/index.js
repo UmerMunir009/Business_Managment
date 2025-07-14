@@ -1,19 +1,9 @@
 const asyncErrorHandler = require("../../utils/asyncErrorHandler");
 const { STATUS_CODES, TEXTS } = require("../../config/constants");
 const { Business, User,User_Role } = require("../../models");
-const {
-  businessCreateSchema,
-} = require("./../../middlewares/validationSchemas/businessSchema");
 const { Op, where } = require("sequelize");
 
 const create = asyncErrorHandler(async (req, res) => {
-  const { error } = businessCreateSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({
-      statusCode: STATUS_CODES.REQUIRED,
-      message: error.details[0].message,
-    });
-  }
   const businessHandler = await User.findOne({
     where: { email: req.body.business_handler },
   });
@@ -96,7 +86,7 @@ const del = asyncErrorHandler(async (req, res) => {
 });
 
 const update = asyncErrorHandler(async (req, res) => {
-  const data = await Book.update(req.body, {
+  const data = await Business.update(req.body, {
     where: {
       id: req.params.id,
     },
