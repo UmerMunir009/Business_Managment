@@ -14,6 +14,11 @@ const businessCreateSchema = Joi.object({
     'string.email': 'Email must be valid',
     'any.required': 'Email is required',
   }),
+   roles: Joi.array().min(1).items(Joi.string()).required().messages({
+    'array.base': 'Roles must be an array',
+    'array.min': 'At least one role is required',
+    'any.required': 'Roles are required',
+  })
 });
 
 module.exports = {

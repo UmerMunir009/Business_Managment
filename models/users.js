@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Business, {foreignKey: "created_by",as: "createdBusinesses",});
       User.hasMany(models.Business, {foreignKey: "business_handler",as: "handledBusinesses", });
       User.hasMany(models.Sales, {foreignKey: "user_id",as: "userSales", });
+      User.hasMany(models.User_Role,{foreignKey:"user_id",as:"roles"})
     }
   }
 

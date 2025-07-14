@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       Business.hasMany(models.Category,{foreignKey:"business_id",as:"business_categories"})
       Business.hasMany(models.Product,{foreignKey:"business_id",as:"business_products"})
       Business.hasMany(models.Sales,{foreignKey:"business_id",as:"business_sales"})
+      Business.hasMany(models.User_Role,{foreignKey:"business_id",as:"business_roles"})
     }
   }
   Business.init({

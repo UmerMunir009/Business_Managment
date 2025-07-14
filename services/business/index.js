@@ -1,6 +1,6 @@
 const asyncErrorHandler = require("../../utils/asyncErrorHandler");
 const { STATUS_CODES, TEXTS } = require("../../config/constants");
-const { Business, User } = require("../../models");
+const { Business, User,User_Role } = require("../../models");
 const {
   businessCreateSchema,
 } = require("./../../middlewares/validationSchemas/businessSchema");
@@ -32,6 +32,16 @@ const create = asyncErrorHandler(async (req, res) => {
     business_handler: businessHandler.id,
   };
   const data = await Business.create(businessData);
+  
+  const roles=req.body.roles
+  for (const role in roles ) {
+    await User_Role.create({
+      user_id: businessHandler.id,
+      business_id: data.id,
+      role: roles[role],
+    });
+  }
+  console.log(2)
   res.status(STATUS_CODES.SUCCESS).json({
     statusCode: STATUS_CODES.SUCCESS,
     message: TEXTS.CREATED,
@@ -45,6 +55,7 @@ const get = asyncErrorHandler(async (req, res) => {
   const includeOptions = [
     { model: User, as: "creator", attributes: ["id", "name", "email"] },
     { model: User, as: "handler", attributes: ["id", "name", "email"] },
+    {model:User_Role,as:'business_roles', attributes:["role"]}
   
   ];
   let data = {};

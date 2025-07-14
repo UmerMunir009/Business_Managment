@@ -42,10 +42,14 @@ const create = asyncErrorHandler(async (req, res) => {
 const get = asyncErrorHandler(async (req, res) => {
 
   const  id  = req.params.id;
+  const includeOptions = [
+    { model: Sale_Item, as: "items" }
+  ];
   const data=await Sales.findAndCountAll({
     where:{business_id:id},
+    include:includeOptions,
     ...req.pagination,
-    raw:true
+   
   }
 
 )
