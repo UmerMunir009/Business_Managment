@@ -4,34 +4,24 @@ const { Business, User,User_Role } = require("../../models");
 const { Op, where } = require("sequelize");
 
 const create = asyncErrorHandler(async (req, res) => {
-  const businessHandler = await User.findOne({
-    where: { email: req.body.business_handler },
-  });
-  if (!businessHandler) {
-    return res.status(400).json({
-      statusCode: STATUS_CODES.CONFLICT,
-      message: TEXTS.USER_NOT_FOUND,
-    });
-  }
-
+  
   const { name, description } = req.body;
   const businessData = {
     name,
     description,
     created_by: req.params.id,
-    business_handler: businessHandler.id,
+    business_handler: req.businessHandler.id,
   };
   const data = await Business.create(businessData);
   
   const roles=req.body.roles
   for (const role in roles ) {
     await User_Role.create({
-      user_id: businessHandler.id,
+      user_id:req.businessHandler.id,
       business_id: data.id,
       role: roles[role],
     });
   }
-  console.log(2)
   res.status(STATUS_CODES.SUCCESS).json({
     statusCode: STATUS_CODES.SUCCESS,
     message: TEXTS.CREATED,

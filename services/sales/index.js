@@ -6,14 +6,6 @@ const create = asyncErrorHandler(async (req, res) => {
    const { business_id, items } = req.body;
    const user_id=req.params.id;
 
-     for (let item of items) {
-      const product = await Product.findByPk(item.product_id);
-
-      if (!product || product.quantity < item.quantity) {
-        return res.status(STATUS_CODES.CONFLICT).json({statusCode: STATUS_CODES.CONFLICT, message: TEXTS.REJECTED_REQUEST,  });
-      }
-    }
-
     const sale = await Sales.create({business_id,user_id});
     let total = 0;
     for (let item of items) {
