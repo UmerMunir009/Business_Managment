@@ -3,21 +3,21 @@ const {
   Model,Sequelize
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Business extends Model {
+  class Product extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Business.belongsTo(models.User, {foreignKey: "created_by",as: "creator",});
-      Business.belongsTo(models.User, {foreignKey: "business_handler",as: "handler",});
-      Business.hasMany(models.Category,{foreignKey:"business_id",as:"business_categories"})
-      Business.hasMany(models.Product,{foreignKey:"business_id",as:"business_products"})
-      Business.hasMany(models.Sales,{foreignKey:"business_id",as:"business_sales"})
+       Product.belongsTo(models.Business, {foreignKey: "business_id",as: "business"});
+       Product.belongsTo(models.Category, {foreignKey: "category_id",as: "category"});
+       Product.hasMany(models.Sale_Item, {foreignKey: 'product_id',as: 'sale_items'});
+
+
     }
   }
-  Business.init({
+  Product.init({
     id: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.literal("gen_random_uuid()"),
@@ -32,19 +32,26 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      created_by: {
-        type: DataTypes.UUID,
+      price: {
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
-      business_handler: {
-        type: DataTypes.UUID,
+      quantity: {
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
+      business_id:{
+        type:DataTypes.UUID,
+        allowNull:false
+      },
+      category_id:{
+        type:DataTypes.UUID,
+        allowNull:false
+      }
   }, {
     sequelize,
-    modelName: 'Business',
-    tableName:'businesses'
+    modelName: 'Product',
+    tableName:'products'
   });
-  return Business;
+  return Product;
 };
-
