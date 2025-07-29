@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Business.belongsTo(models.User, {foreignKey: "created_by",as: "creator",});
-      Business.belongsTo(models.User, {foreignKey: "business_handler",as: "handler",});
+      Business.belongsTo(models.User, {foreignKey: "owner",as: "businessOwner",});
       Business.hasMany(models.Category,{foreignKey:"business_id",as:"business_categories"})
       Business.hasMany(models.Product,{foreignKey:"business_id",as:"business_products"})
       Business.hasMany(models.Sales,{foreignKey:"business_id",as:"business_sales"})
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      business_handler: {
+      owner: {
         type: DataTypes.UUID,
         allowNull: false,
       },

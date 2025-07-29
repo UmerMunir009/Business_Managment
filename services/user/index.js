@@ -1,9 +1,10 @@
 const asyncErrorHandler = require("../../utils/asyncErrorHandler");
 const { STATUS_CODES, TEXTS } = require("../../config/constants");
 const { generateToken } = require("../../utils/jwtToken");
-const { User } = require("../../models");
-const create = asyncErrorHandler(async (req, res) => {
+const { User,Business } = require("../../models");
 
+const create = asyncErrorHandler(async (req, res) => {
+console.log("in the handler")
   const isExist = await User.findOne({
     where: {
       email: req.body.email
@@ -14,16 +15,27 @@ const create = asyncErrorHandler(async (req, res) => {
   if (isExist) {
     return res.status(STATUS_CODES.CONFLICT).json({
       statusCode: STATUS_CODES.CONFLICT,
-      message: "Email already used.",
+      message: TEXTS.USER_EXIST,
     });
   }
+  const {name,email,password}=req.body
+   const userData={
+    name,
+    email,
+    password,
+    admin:false
+   }
 
-  const data = await User.create(req.body);
+  const user = await User.create(userData);
+  console.log(user)
+  let access_token = generateToken(user);
+
 
   res.status(STATUS_CODES.SUCCESS).json({
     statusCode: STATUS_CODES.SUCCESS,
     message: TEXTS.CREATED,
-    data: data,
+    data: user,
+    accessToken:access_token
   });
 
 });
@@ -64,7 +76,7 @@ const del = asyncErrorHandler(async (req, res) => {
 
 const update = asyncErrorHandler(async (req, res) => {
 
-  const data = await User.update(req.body, {
+  const data = await User.update({password:req.body.newPassword}, {
     where: {
       id: req.params.id
     },
@@ -94,18 +106,24 @@ const login = asyncErrorHandler(async (req, res) => {
 
   if (user) {
     let access_token = generateToken(user);
-    console.log(access_token)
+    const userBusinesses = await Business.findAll({where:{owner:user.id},
+    ...req.pagination
+  });
     res.status(STATUS_CODES.SUCCESS).json({
       statusCode: STATUS_CODES.SUCCESS,
-      message: TEXTS.SUCCESS,
-      data: user,
+      message: TEXTS.LOGIN,
+      data: 
+      {
+        businesses:userBusinesses,
+        userData:user
+      },
       accessToken: access_token
     });
 
   } else {
     res.status(STATUS_CODES.NOT_FOUND).json({
       statusCode: STATUS_CODES.NOT_FOUND,
-      message: "Invalid credentials"
+      message: TEXTS.UN_AUTHORIZED
     });
   }
 
@@ -125,10 +143,14 @@ const admin = asyncErrorHandler(async (req, res) => {
 
   if (user?.admin) {
     let access_token = generateToken(user);
+    const data = await Business.findAll({
+    ...req.pagination
+  });
+
     res.status(STATUS_CODES.SUCCESS).json({
       statusCode: STATUS_CODES.SUCCESS,
       message: TEXTS.SUCCESS,
-      data: user,
+      data: data,
       accessToken: access_token
     });
 

@@ -4,24 +4,20 @@ const { Business, User,User_Role } = require("../../models");
 const { Op, where } = require("sequelize");
 
 const create = asyncErrorHandler(async (req, res) => {
-  
-  const { name, description } = req.body;
+  console.log('in the handler')
+const { name, description } = req.body;
   const businessData = {
     name,
     description,
     created_by: req.params.id,
-    business_handler: req.businessHandler.id,
+    owner: req.owner
   };
   const data = await Business.create(businessData);
-  
-  const roles=req.body.roles
-  for (const role in roles ) {
-    await User_Role.create({
-      user_id:req.businessHandler.id,
+  await User_Role.create({user_id:req.owner,
       business_id: data.id,
-      role: roles[role],
+      role: 'Owner',
     });
-  }
+  
   res.status(STATUS_CODES.SUCCESS).json({
     statusCode: STATUS_CODES.SUCCESS,
     message: TEXTS.CREATED,
@@ -34,19 +30,19 @@ const get = asyncErrorHandler(async (req, res) => {
   const user = await User.findOne({ where: { id } });
   const includeOptions = [
     { model: User, as: "creator", attributes: ["id", "name", "email"] },
-    { model: User, as: "handler", attributes: ["id", "name", "email"] },
+    { model: User, as: "businessOwner", attributes: ["id", "name", "email"] },
     {model:User_Role,as:'business_roles', attributes:["role"]}
   
   ];
   let data = {};
   if (user?.admin) {
-    data = await Business.findAndCountAll({
+    data = await Business.findAll({
       include: includeOptions,
       ...req.pagination,
     });
   } else {
-    data = await Business.findAndCountAll({
-      where: { business_handler: id },
+    data = await Business.findAll({
+      where: { owner: id },
       include: includeOptions,
       ...req.pagination,
     });
