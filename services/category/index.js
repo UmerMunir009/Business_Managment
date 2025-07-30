@@ -26,7 +26,7 @@ const create = asyncErrorHandler(async (req, res) => {
 const get = asyncErrorHandler(async (req, res) => {
 
   const  id  = req.params.id;
-  const data=await Category.findAndCountAll({
+  const data=await Category.findAll({
     where:{business_id:id},
     ...req.pagination,
     raw:true

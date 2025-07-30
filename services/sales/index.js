@@ -37,7 +37,7 @@ const get = asyncErrorHandler(async (req, res) => {
   const includeOptions = [
     { model: Sale_Item, as: "items" }
   ];
-  const data=await Sales.findAndCountAll({
+  const data=await Sales.findAll({
     where:{business_id:id},
     include:includeOptions,
     ...req.pagination,

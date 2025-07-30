@@ -9,7 +9,10 @@ const CustomError = require("./utils/CustomError");
 const globalErrorHandler = require("./controllers/error/errorController");
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: ['*'], // or '*' for all
+  credentials: true
+}));
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ limit: '5mb', extended: false }));
 

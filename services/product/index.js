@@ -26,7 +26,7 @@ const create = asyncErrorHandler(async (req, res) => {
 const get = asyncErrorHandler(async (req, res) => {
 
   const  id  = req.params.id;
-  const data=await Product.findAndCountAll({
+  const data=await Product.findAl({
     where:{category_id:id},
     ...req.pagination,
     raw:true
